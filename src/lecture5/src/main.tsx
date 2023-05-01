@@ -14,42 +14,46 @@ function main(sources) {
     } 
 }
 
-// source = input (read) effect
-// sink = output (write) effect
-
 function domDriver(text$) {
-    console.log('fakedomsink');    
-    console.log({text$});
-    // 아무런 내용도 없는 빈깡통 sink
-    
-   text$.subscribe({
-    next: str => {
-        const elem = document.querySelector('#app');
-        elem!.textContent = str;
-     }})  
-     const domSource = fromEvent(document, 'click');
-     return domSource;
+    text$.subscribe({
+        next : str => {
+            const elem = document.querySelector('#app')
+            elem!.textContent = str 
+        }
+    })
+    const domSource = fromEvent(document, "click")
+    return domSource
 }
+// function domDriver(text$) {
+//     text$.subscribe({
+//     next: str => {
+//         const elem = document.querySelector('#app');
+//         elem!.textContent = str;
+//      }})  
+//      const domSource = fromEvent(document, 'click');
+//      return domSource;
+// }
 
 function logDriver(msg$) {
     msg$.subscribe({ next: msg => { console.log(msg); }})
 }
 
 function run(mainFn, drivers) {
-    const fakeDOMSink = xs.create();
-    const domSource = domDriver(fakeDOMSink);
-    const sinks = mainFn({DOM: domSource});
-    console.log({sinks});
-    
+    const fakeDOMSink = xs.create()
+    const domSource = domDriver(fakeDOMSink)
+    const sinks = mainFn({DOM : domSource})
     fakeDOMSink.imitate(sinks.DOM)
-    
-    
-   /* Object.keys(drivers).forEach(key => {
-        if (sinks[key]) {
-            drivers[key](sinks[key]);
-        }
-    });*/
 }
+
+// function run(mainFn, drivers) {
+//     const fakeDOMSink = xs.create();
+//     const domSource = domDriver(fakeDOMSink);
+//     const sinks = mainFn({DOM: domSource});
+//     // console.log({sinks});
+    
+//     fakeDOMSink.imitate(sinks.DOM)
+// }
+
 
 run(main, {
     DOM: domDriver,
